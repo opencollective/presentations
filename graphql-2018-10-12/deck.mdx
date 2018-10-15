@@ -1,0 +1,164 @@
+export { default as theme } from './theme'
+
+# GraphQL API v2
+
+<small>
+François Hodierne - October 2018
+</small>
+
+---
+
+# Preview is live!
+
+---
+
+# Get an API Key
+
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 13.58.27.png")}/>
+
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 14.01.44.png")}/>
+
+---
+
+# GraphQL Playground
+
+`https://github.com`<br/>`/prisma/graphql-playground`
+
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 14.08.27.png")}/>
+
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 14.07.44.png")}/>
+
+---
+
+# Endpoint URL
+
+<small>
+
+`https://api.opencollective.com`<br/>`/graphql/v2?apiKey=<API_KEY>`
+
+</small>
+
+---
+
+If you get a 400 error, insists!
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 14.13.14.png")}/>
+
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 14.17.05.png")}/>
+
+---
+
+<small style={{fontSize: '0.6em'}}>
+
+Your first query
+
+```graphql
+query loggedInAccount {
+  loggedInAccount {
+    id
+    name
+    slug
+  }
+}
+```
+
+</small>
+
+---
+
+<small style={{fontSize: '0.6em'}}>
+
+```javascript
+{
+  "data": {
+    "loggedInAccount": {
+      "id": "k3z8arxv-eymko60y-yx5qgl5n-bj9w704d",
+      "name": "François Hodierne",
+      "slug": "znarf"
+    }
+  }
+}
+```
+
+</small>
+
+---
+
+<small style={{fontSize: '0.6em'}}>
+
+```graphql
+query loggedInAccount {
+  loggedInAccount {
+    id
+    name
+    slug
+    memberOf(role: BACKER) {
+      totalCount
+      nodes {
+        role
+        account {
+          id
+          name
+          slug
+        }
+      }
+    }
+  }
+}
+```
+
+</small>
+
+---
+
+<small style={{fontSize: '0.6em'}}>
+
+Query
+
+```graphql
+query collective($slug: String) {
+  collective(slug: $slug) {
+    id
+    name
+    slug
+  }
+}
+```
+
+Query Variables
+
+```json
+{"slug": "babel"}
+```
+
+</small>
+
+---
+
+# Contribute
+
+Code
+
+`https://github.com`<br/>`/opencollective/opencollective-api`<br/>`/tree/master/server/graphql/v2`
+
+---
+
+# Contribute
+
+Issues
+
+`https://github.com`<br/>`/opencollective/opencollective-api`<br/>`/issues`
+
+---
+
+# Happy Exploration!
