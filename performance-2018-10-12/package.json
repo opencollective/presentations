@@ -1,0 +1,33 @@
+{
+  "name": "opencollective-performance-2018-10-12",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "serve ./dist --single",
+    "dev": "mdx-deck deck.mdx",
+    "build": "mdx-deck build deck.mdx"
+  },
+  "engines": {
+    "node": ">10.0.0",
+    "npm": ">6.0.0"
+  },
+  "now": {
+    "type": "npm",
+    "alias": ["opencollective-performance-2018-10-12"]
+  },
+  "author": {
+    "name": "Open Collective, Inc.",
+    "email": "team@opencollective.com"
+  },
+  "contributors": ["François Hodierne <francois@opencollective.com>"],
+  "license": "ISC",
+  "devDependencies": {
+    "file-loader": "^2.0.0",
+    "mdx-deck": "^1.7.7",
+    "prettier": "^1.14.3"
+  },
+  "dependencies": {
+    "serve": "^10.0.2"
+  }
+}

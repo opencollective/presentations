@@ -1,0 +1,238 @@
+export { default as theme } from './theme'
+
+# Web Performance Improvements
+
+<small>
+François Hodierne - October 2018
+</small>
+
+---
+
+## PNG Compression
+
+---
+
+```javascript
+import imagemin from 'imagemin';
+import imageminOptipng from 'imagemin-optipng';
+
+const options = {
+  use: [
+    imageminOptipng({ optimizationLevel: 7 }),
+  ],
+};
+
+imagemin(
+  [`${filePath}*.png`],
+  path.dirname(`${filePath}*.png`),
+  options,
+);
+
+```
+
+---
+
+## Proxying / Resizing<br/>External Images
+
+---
+
+Before
+
+`background-image: url("https://opencollective-production.s3-us-west-1.amazonaws.com/5e4af5d0-c0b3-11e8-ae07-49a367481dee.png");`
+
+
+---
+
+After
+
+`background-image: url("https://images.opencollective.com/proxy/images?src=https%3A%2F%2Fopencollective-production.s3-us-west-1.amazonaws.com%2F5e4af5d0-c0b3-11e8-ae07-49a367481dee.png&width=224");`
+
+---
+
+## Bundling of
+## External CSS Libraries
+
+Using `next-css`
+
+* Bootstrap
+* Font Awesome
+
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 09.48.27.png")}/>
+<br/>
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 09.48.08.png")}/>
+
+---
+
+## Async Loading of
+## External Libraries
+
+* Paypal
+* Stripe
+* Google Maps
+
+---
+
+```javascript
+import loadScript from 'load-script';
+
+export const loadScriptAsync = url §=>
+  new Promise((resolve, reject) => {
+    loadScript(url, (err, script) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(script);
+      }
+    });
+  });
+```
+
+---
+
+```javascript
+const getStripe = async () => {
+  if (!stripe) {
+    const stripeKey = getEnvVar('STRIPE_KEY');
+    if (stripeKey) {
+      if (typeof window.Stripe === 'undefined') {
+        await loadScriptAsync('https://js.stripe.com/v3/');
+      }
+      stripe = window.Stripe(stripeKey);
+    } else {
+      throw new Error("'STRIPE_KEY' is undefined.");
+    }
+  }
+  return stripe;
+};
+```
+
+---
+
+```javascript
+async componentDidMount() {
+  const stripe = await getStripe();
+
+  if (stripe) {
+    const elements = stripe.elements();
+    const card = elements.create('card', { style: style });
+
+    ...
+  }
+}
+```
+
+---
+
+```javascript
+class CreateCollectivePage extends React.Component {
+  static getInitialProps({ query: { hostCollectiveSlug } }) {
+    const scripts = { googleMaps: true }; // Used in InputTypeLocation
+    return { slug: hostCollectiveSlug, scripts };
+  }
+```
+
+---
+
+```javascript
+export default class OpenCollectiveFrontendApp extends App {
+  static async getInitialProps({ Component, ctx }) {
+    let pageProps = {};
+
+    if (Component.getInitialProps) {
+      pageProps = await Component.getInitialProps(ctx);
+    }
+
+    const scripts = {};
+
+    if (pageProps.scripts) {
+      if (pageProps.scripts.googleMaps) {
+        if (ctx.req) {
+          scripts['google-maps'] = getGoogleMapsScriptUrl();
+        } else {
+          await loadGoogleMaps();
+        }
+      }
+    }
+
+    return { pageProps, scripts };
+  }
+```
+
+---
+
+## Dynamic loading of
+## components and dependencies
+
+Automatically separate chunks!
+
+---
+
+* HTMLEditor (+ React Quill, Quill)
+* MarkdownEditor (+ React Markdown Editor)
+* InputTypeTags (+ React Tag Input, own React Dom)
+* DateTime (+ Moment Timezone)
+
+---
+
+```javascript
+let HTMLEditor;
+if (process.env.DYNAMIC_IMPORT) {
+  HTMLEditor = dynamic(() =>
+    import(
+      /* webpackChunkName: 'HTMLEditor' */
+      './HTMLEditor'
+    ),
+  );
+} else {
+  HTMLEditor = require('./HTMLEditor').default;
+}
+```
+
+---
+
+# Results
+
+---
+
+# Pingdom
+
+---
+
+Home Page load time:<br/>(page + all assets + JavaScript loaded)
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 10.24.53.png")}/>
+
+Record: 1.35s Usually: 2s to 3s
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-09 at 14.57.46.png")}/>
+
+Before: ~6MB -> After: ~2MB
+
+---
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 10.22.31.png")}/>
+
+Before: ~6MB -> After: ~2MB
+
+---
+
+# Bundle Analysis
+
+---
+
+# Before
+
+<img src={require("file-loader!./Screen Shot 2018-09-26 at 18.18.47.png")}/>
+
+---
+
+# After
+
+<img src={require("file-loader!./Screen Shot 2018-10-12 at 10.40.41.png")}/>
+
+---
+
+# To be continued!
